@@ -1,16 +1,19 @@
 /**
  * Header Component
- * 
+ *
  * This component renders the navigation header for the application.
  * It includes links to different routes and a greeting message.
- * 
+ *
  * Example usage:
  * <Header />
  */
 
+import { Link } from "react-router-dom";
 import { routes } from "../routes/route";
 
 const Header = () => {
+    const filteredRoutes = routes.filter((r) => r.action === "view");
+
     return (
         <nav className="navbar navbar-expand-lg bg-body-tertiary">
             <div className="container-fluid">
@@ -33,21 +36,24 @@ const Header = () => {
                 {/* Collapsible content */}
                 <div className="collapse navbar-collapse" id="navbarText">
                     {/* Navigation links */}
-                    {routes.map((route) => {
+                    {filteredRoutes.map((route) => {
                         return (
                             <ul
                                 key={route.name}
                                 className="navbar-nav me-auto mb-2 mb-lg-0"
                             >
                                 <li className="nav-item">
-                                    <a
-                                        className="nav-link active"
-                                        aria-current="page"
-                                        href={route.path}
+                                    <Link
+                                        className={`nav-link ${
+                                            location.pathname === route.path
+                                                ? "active"
+                                                : ""
+                                        }`}
+                                        to={route.path}
                                     >
                                         <route.icon className="me-2" />
                                         {route.name}
-                                    </a>
+                                    </Link>
                                 </li>
                             </ul>
                         );

@@ -5,6 +5,7 @@
 
 import { People } from 'react-bootstrap-icons';
 import CustomerList from '../pages/customers/customer-list';
+import AddCustomer from '../pages/customers/add-customer';
 
 /**
  * Array of route configurations for the application.
@@ -15,6 +16,12 @@ export const routes = [
         path: "/customers",
         name: "Customers",
         icon: People,
-        component: CustomerList
+        component: CustomerList,
+        action: "view"
     },
+    {
+        path: "/customers/add",
+        component: AddCustomer,
+        action: "create"
+    }
 ];

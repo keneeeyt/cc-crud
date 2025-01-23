@@ -14,6 +14,7 @@ import DataTable from "../../components/data-table";
 import { PencilSquare, Trash } from "react-bootstrap-icons";
 import { useApiMutation } from "../../utils/use-api-mutation";
 import apiClient from "../../utils/http-common";
+import { useNavigate } from "react-router-dom";
 
 
 const fetchData = async (data) => {
@@ -23,10 +24,11 @@ const fetchData = async (data) => {
 
 const CustomerList = () => {
     const [customers, setCustomers] = useState([]);
+    const navigate = useNavigate();
 
     const { mutate, isLoading } = useApiMutation(fetchData, {
         onSuccess: (data) => {
-            setCustomers(data);
+            setCustomers(data.data);
         },
     });
 
@@ -37,7 +39,7 @@ const CustomerList = () => {
     // Columns definition for the table
     const columns = [
         { label: "ID", key: "id" },
-        { label: "Name", key: "name" },
+        { label: "Name", key:  "name"},
         { label: "Email", key: "email" },
         {
             label: "Actions",
@@ -68,7 +70,7 @@ const CustomerList = () => {
         <div className="container mt-4">
             <div className="d-flex justify-content-between align-items-center">
                 <h1>Customer List</h1>
-                <button className="btn btn-primary">Add Customer</button>
+                <button onClick={()=> navigate('/customers/add')} className="btn btn-primary">Add Customer</button>
             </div>
             {isLoading ? (
                 <div className="text-center my-4">
