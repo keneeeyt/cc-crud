@@ -57,4 +57,47 @@ class CustomerController extends Controller
         ], 200);
     }
 
+    public function show(Customer $customer)
+    {
+        return new CustomerResource($customer);
+    }
+
+    public function update(Request $request, Customer $customer)
+    {
+        $validator = Validator::make($request->all(), [
+            'last_name' => ['required', 'string', 'min:2'],
+            'first_name' => ['required', 'string', 'min:2'],
+            'email' => ['required', 'email'],
+            'contact_number' => ['required', 'regex:/^[+\d\s]+$/'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors(), 'type'=>'danger'], 200);
+        }
+
+        $customer->update([
+            'last_name' => $request->last_name,
+            'first_name' => $request->first_name,
+            'email' => $request->email,
+            'contact_number' => $request->contact_number,
+        ]);
+
+        return response()->json([
+            'message' => 'Successfully updated customer',
+            'data' => new CustomerResource($customer),
+            'type' => 'success',
+        ], 200);
+
+    }
+
+    public function destroy(Customer $customer)
+    {
+        $customer->delete();
+
+        return response()->json([
+            'message' => 'Successfully deleted customer',
+            'type' => 'success',
+        ], 200);
+    }
+
 }

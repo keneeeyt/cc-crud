@@ -1,20 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import apiClient from "../../utils/http-common";
 import { useApiMutation } from "../../utils/use-api-mutation";
 import CustomToast from "../../components/custom-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-const submitData = async (data) => {
-    const response = await apiClient.post("/customers", data); // Replace with your endpoint
+const submitData = async (id, data) => {
+    const response = await apiClient.put(`/customers/${id}`, data); // Replace with your endpoint
     return response.data;
 };
 
-const AddCustomer = () => {
+const getData = async (id) => {
+    const response = await apiClient.get(`/customers/${id}`); // Replace with your endpoint
+    return response.data.data;
+};
+
+const EditCustomer = () => {
     const [showToast, setShowToast] = useState(false);
     const [toastMessage, setToastMessage] = useState("");
     const [toastColor, setToastColor] = useState("");
-
-    const navigate = useNavigate();
     // State to store form data
     const [formData, setFormData] = useState({
         firstName: "",
@@ -22,9 +25,25 @@ const AddCustomer = () => {
         email: "",
         contactNumber: "",
     });
-
     // State to store errors
     const [errors, setErrors] = useState({});
+    const params = useParams();
+    const navigate = useNavigate();
+
+    const { mutate: getCustomerData, isPending } = useApiMutation(getData, {
+        onSuccess: (data) => {
+            setFormData({
+                firstName: data.first_name,
+                lastName: data.last_name,
+                email: data.email,
+                contactNumber: data.contact_number,
+            });
+        },
+    });
+
+    useEffect(() => {
+        getCustomerData(params.id);
+    }, [params.id]);
 
     // Handle first name change
     const handleFirstNameChange = (e) => {
@@ -91,23 +110,11 @@ const AddCustomer = () => {
         return Object.keys(newErrors).length === 0; // Return true if no errors
     };
 
-    const { mutate, isLoading } = useApiMutation(submitData, {
+    const { mutate } = useApiMutation((data) => submitData(params.id, data), {
         onSuccess: (data) => {
             setToastMessage(data.message);
             setToastColor(data.type);
             setShowToast(true);
-
-            if (data.type === "success") {
-                setTimeout(() => {
-                    navigate("/customers");
-                }, 3000);
-                setFormData({
-                    firstName: "",
-                    lastName: "",
-                    email: "",
-                    contactNumber: "",
-                });
-            }
         },
     });
 
@@ -128,16 +135,19 @@ const AddCustomer = () => {
     return (
         <div className="container mt-5">
             <div className="d-flex justify-content-between mb-4">
-                <button onClick={()=> navigate('/customers')} type="button" className="btn btn-light">
+                <button
+                    onClick={() => navigate("/customers")}
+                    type="button"
+                    className="btn btn-light"
+                >
                     Go back
                 </button>
-                <h2 className="mb-4">Add Customer</h2>
+                <h2 className="mb-4">Update Customer</h2>
             </div>
-
-            {isLoading ? (
+            {isPending ? (
                 <div className="text-center my-4">
                     <output className="spinner-border">
-                        <span className="visually-hidden">Loading...</span>
+                        <span className="visually-hidden">Updating...</span>
                     </output>
                 </div>
             ) : (
@@ -232,7 +242,7 @@ const AddCustomer = () => {
 
                     {/* Submit Button */}
                     <button type="submit" className="btn btn-primary">
-                        Add Customer
+                        Update Customer
                     </button>
                 </form>
             )}
@@ -247,4 +257,4 @@ const AddCustomer = () => {
     );
 };
 
-export default AddCustomer;
+export default EditCustomer;
