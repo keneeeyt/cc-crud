@@ -66,9 +66,14 @@ const CustomerList = () => {
                 <>
                     <PencilSquare
                         className="me-2"
+                        data-testid={`edit-${row.id}`}
                         onClick={() => handleEdit(row)}
                     />
-                    <Trash color="red" onClick={() => handleDelete(row)} />
+                    <Trash
+                        color="red"
+                        data-testid={`delete-${row.id}`}
+                        onClick={() => handleDelete(row)}
+                    />
                 </>
             ),
         },
