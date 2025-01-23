@@ -127,7 +127,3 @@ This project allows users to create, read, update, and delete customer details. 
 - Ensure that both the backend and frontend [.env](http://_vscodecontentref_/3) files are correctly configured.
 - The backend server should be running before starting the frontend development server.
 - A database SQL file is available in the root directory. You can use it to set up the database.
-
-## License
-
-This project is licensed under the MIT License.
